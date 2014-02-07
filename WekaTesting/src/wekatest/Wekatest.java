@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.Random;
 
+import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.J48;
@@ -207,5 +208,27 @@ public class Wekatest {
 		evaluation2.crossValidateModel(classifier2, train, 10, new Random(1));
 		System.out.println(evaluation2.toSummaryString());
 		System.out.println(evaluation2.toMatrixString());
+		
+		BufferedReader breaders = null;
+		breaders = new BufferedReader(new FileReader("C:\\Users\\Caity\\Dropbox\\adaptive-interfaces\\amy-2010-results\\internet-only\\5-26-noWindowAPI-outliers-noDistLessEuc-uncorrupted-internet-noHugeAPI.arff"));
+
+		System.out.println("import");
+		
+		Instances trains = new Instances(breaders);
+		trains.setClassIndex(trains.numAttributes() - 1);
+		
+		J48 cModel = new J48();  
+		cModel.buildClassifier(trains);  
+
+		weka.core.SerializationHelper.write("j48blah.model", cModel);
+
+		//J48 cls = (J48) weka.core.SerializationHelper.read("C:\\Users\\Caity\\Documents\\GitHub\\Padlab-Adaptive-Mouse-Interfaces\\Weka Models\\ClickDuration_J48.model");
+		J48 cls = (J48) weka.core.SerializationHelper.read("J48blah.model");
+
+		// Test the model
+		Evaluation eTest = new Evaluation(trains);
+		eTest.evaluateModel(cls, trains);
+		System.out.println(eTest.toSummaryString());
+		System.out.println(eTest.toMatrixString());
 	}
 }
