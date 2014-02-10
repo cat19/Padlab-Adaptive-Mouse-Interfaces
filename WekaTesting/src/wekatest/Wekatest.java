@@ -230,5 +230,9 @@ public class Wekatest {
 		eTest.evaluateModel(cls, trains);
 		System.out.println(eTest.toSummaryString());
 		System.out.println(eTest.toMatrixString());
+		
+		eTest.crossValidateModel(cls, trains, 10, new Random(1));
+		System.out.println(eTest.toSummaryString());
+		System.out.println(eTest.toMatrixString());
 	}
 }
