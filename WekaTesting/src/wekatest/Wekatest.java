@@ -10,6 +10,7 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.trees.J48;
 import weka.classifiers.meta.AttributeSelectedClassifier;
 import weka.classifiers.meta.RotationForest;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.ClassifierSubsetEval;
@@ -24,29 +25,94 @@ public class Wekatest {
 	//Deleting your class attribute is bad
 	//It is case sensitive, so if you have xAccel and xaccel and ask it to delete
 	//xaccel, it will ONLY delete xaccel and not xAccel
+	
+	//deleteByName 2.0 now handles spaces in attribute names
 	public static void deleteByName(Instances inst, String attrName){
 		String name;
 		for(int i=0; i<inst.numAttributes(); i++){
+			String namey = inst.attribute(i).toString();
 			//the name of the attribute is the second word in the attribute string
-			name = inst.attribute(i).toString().split(" ")[1];
+			if(namey.contains("'")){
+				name = inst.attribute(i).toString().split("'")[1];
+			}
+			else{
+				name = inst.attribute(i).toString().split(" ")[1];
+			}
+			
 			//System.out.println(name);
 			if(name.equals(attrName)){
-				if(name.equals(inst.classAttribute().toString().split(" ")[1])){
-					System.out.println("Can't delete the class attribute");
+				if(namey.contains("'")){
+					if(name.equals(inst.classAttribute().toString().split("'")[1])){
+						System.out.println("Can't delete the class attribute");
+					}
+					else{
+						System.out.println("deleting " + name);
+						inst.deleteAttributeAt(i);
+					}
 				}
 				else{
-					System.out.println("deleting " + name);
-					inst.deleteAttributeAt(i);
+					if(name.equals(inst.classAttribute().toString().split(" ")[1])){
+						System.out.println("Can't delete the class attribute");
+					}
+					else{
+						System.out.println("deleting " + name);
+						inst.deleteAttributeAt(i);
+					}
 				}
+				
 				
 			}
 		}
 	}
 
+	//second deletebyname, withholds one instance more than the classattribute
+	public static int deleteByName(Instances inst, String attrName, String toWithold){
+		String name;
+		for(int i=0; i<inst.numAttributes(); i++){
+			String namey = inst.attribute(i).toString();
+			//the name of the attribute is the second word in the attribute string
+			if(namey.contains("'")){
+				name = inst.attribute(i).toString().split("'")[1];
+			}
+			else{
+				name = inst.attribute(i).toString().split(" ")[1];
+			}
+			
+			//System.out.println(name);
+			if(name.equals(attrName)){
+				if(namey.contains("'")){
+					if(name.equals(inst.classAttribute().toString().split("'")[1]) || name.equals(toWithold)){
+						System.out.println("Can't delete the class attribute");
+						return 1;
+					}
+					else{
+						System.out.println("deleting " + name);
+						inst.deleteAttributeAt(i);
+						return 0;
+					}
+				}
+				else{
+					if(name.equals(inst.classAttribute().toString().split(" ")[1]) || name.equals(toWithold)){
+						System.out.println("Can't delete the class attribute");
+						return 1;
+					}
+					else{
+						System.out.println("deleting " + name);
+						inst.deleteAttributeAt(i);
+						return 0;
+					}
+				}
+				
+				
+			}
+		}
+		return 0;
+	}
+	
 	public static void main(String[] args) throws Exception{
 
 		//make bufferedreader
-		BufferedReader breader = null;
+		/*BufferedReader breader = null;
 		breader = new BufferedReader(new FileReader("tex.arff"));
 
 		Instances train = new Instances(breader);
@@ -207,32 +273,90 @@ public class Wekatest {
 		Evaluation evaluation2 = new Evaluation(train);
 		evaluation2.crossValidateModel(classifier2, train, 10, new Random(1));
 		System.out.println(evaluation2.toSummaryString());
-		System.out.println(evaluation2.toMatrixString());
+		System.out.println(evaluation2.toMatrixString());*/
 		
 		BufferedReader breaders = null;
 		breaders = new BufferedReader(new FileReader("C:\\Users\\Caity\\Dropbox\\adaptive-interfaces\\amy-2010-results\\internet-only\\5-26-noWindowAPI-outliers-noDistLessEuc-uncorrupted-internet-noHugeAPI.arff"));
+		
 
 		System.out.println("import");
 		
 		Instances trains = new Instances(breaders);
+		breaders.close();
 		trains.setClassIndex(trains.numAttributes() - 1);
+		//Testing modified deleteByName to handle spaces in names
+		/*for(int i=0; i<(trains.numAttributes()); i++){
+			System.out.println(trains.attribute(i));
+		}
+		System.out.println(trains.numAttributes());
+		deleteByName(trains,"CBTDestroyed");
+		System.out.println(trains.numAttributes());
+		deleteByName(trains,"start menu?");
+		System.out.println(trains.numAttributes());
+		for(int i=0; i<(trains.numAttributes()); i++){
+			System.out.println(trains.attribute(i));
+		}*/
 		
-		J48 cModel = new J48();  
-		cModel.buildClassifier(trains);  
+		//J48 cModel = new J48();  
+		//cModel.buildClassifier(trains);  
 
-		weka.core.SerializationHelper.write("j48blah.model", cModel);
+		//weka.core.SerializationHelper.write("j48blah.model", cModel);
 
-		//J48 cls = (J48) weka.core.SerializationHelper.read("C:\\Users\\Caity\\Documents\\GitHub\\Padlab-Adaptive-Mouse-Interfaces\\Weka Models\\ClickDuration_J48.model");
-		J48 cls = (J48) weka.core.SerializationHelper.read("J48blah.model");
+		J48 cls = (J48) weka.core.SerializationHelper.read("C:\\Users\\Caity\\Documents\\GitHub\\Padlab-Adaptive-Mouse-Interfaces\\Weka Models\\ClickDuration_J48.model");
+		//J48 cls = (J48) weka.core.SerializationHelper.read("J48blah.model");
 
+		//Delete all unused attributes
+		/*for(int i=0; i<trains.numAttributes(); i++){
+			String t = trains.attribute(i).toString();
+			if(t.contains("'")){
+				deleteByName(trains,t.split("'")[1],"clickDuration");
+			}
+			else{
+				deleteByName(trains,t.split(" ")[1],"clickDuration");
+			}
+		}*/
+		int i=0;
+		while(i<trains.numAttributes()){
+			String t = trains.attribute(i).toString();
+			if(t.contains("'")){
+				if(deleteByName(trains,t.split("'")[1],"clickDuration") == 1){
+					i++;
+				}
+			}
+			else{
+				if(deleteByName(trains,t.split(" ")[1],"clickDuration") == 1){
+					i++;
+				}
+			}
+		}
+		
+		System.out.println(trains.numAttributes());
+		
 		// Test the model
 		Evaluation eTest = new Evaluation(trains);
 		eTest.evaluateModel(cls, trains);
 		System.out.println(eTest.toSummaryString());
 		System.out.println(eTest.toMatrixString());
 		
-		eTest.crossValidateModel(cls, trains, 10, new Random(1));
+		/*eTest.crossValidateModel(cls, trains, 10, new Random(1));
 		System.out.println(eTest.toSummaryString());
-		System.out.println(eTest.toMatrixString());
+		System.out.println(eTest.toMatrixString());*/
+		
+		Instance in = trains.instance(82005);
+		//Instance in = trains.instance(82000);
+		//PRINTS OUT 0.0 FOR ABLE
+		//1.0 FOR NOT
+		//System.out.println(in.attribute(10));
+		double res = (cls.classifyInstance(in));
+		if(res == 0.0){
+			System.out.println("ABLE");
+		}
+		else{
+			System.out.println("NOT");
+		}
+		//eTest.evaluateModelOnce(cls, i);
+		//System.out.println(eTest.evaluateModelOnce(cls, i));
+		//System.out.println(eTest.predictions().);
+		//System.out.println(eTest.toSummaryString());
 	}
 }
