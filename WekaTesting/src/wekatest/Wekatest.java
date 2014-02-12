@@ -276,7 +276,8 @@ public class Wekatest {
 		System.out.println(evaluation2.toMatrixString());*/
 		
 		BufferedReader breaders = null;
-		breaders = new BufferedReader(new FileReader("C:\\Users\\Caity\\Dropbox\\adaptive-interfaces\\amy-2010-results\\internet-only\\5-26-noWindowAPI-outliers-noDistLessEuc-uncorrupted-internet-noHugeAPI.arff"));
+		//breaders = new BufferedReader(new FileReader("C:\\Users\\Caity\\Dropbox\\adaptive-interfaces\\amy-2010-results\\internet-only\\5-26-noWindowAPI-outliers-noDistLessEuc-uncorrupted-internet-noHugeAPI.arff"));
+		breaders = new BufferedReader(new FileReader("C:\\Users\\Caity\\Documents\\PAD\\mouseOutput.arff"));
 		
 
 		System.out.println("import");
@@ -342,18 +343,24 @@ public class Wekatest {
 		System.out.println(eTest.toSummaryString());
 		System.out.println(eTest.toMatrixString());*/
 		
-		Instance in = trains.instance(82005);
-		//Instance in = trains.instance(82000);
-		//PRINTS OUT 0.0 FOR ABLE
-		//1.0 FOR NOT
-		//System.out.println(in.attribute(10));
-		double res = (cls.classifyInstance(in));
-		if(res == 0.0){
-			System.out.println("ABLE");
+		for(int j=0; j<trains.numInstances(); j++){
+			Instance in = trains.instance(j);
+			System.out.println(in.toString());
+			
+			//Instance in = trains.instance(82000);
+			//PRINTS OUT 0.0 FOR ABLE
+			//1.0 FOR NOT
+			//System.out.println(in.attribute(10));
+			double res = (cls.classifyInstance(in));
+			if(res == 0.0){
+				System.out.println("ABLE");
+			}
+			else{
+				System.out.println("NOT");
+			}
+			
 		}
-		else{
-			System.out.println("NOT");
-		}
+
 		//eTest.evaluateModelOnce(cls, i);
 		//System.out.println(eTest.evaluateModelOnce(cls, i));
 		//System.out.println(eTest.predictions().);
