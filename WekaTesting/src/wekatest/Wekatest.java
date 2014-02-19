@@ -345,25 +345,29 @@ public class Wekatest {
 		
 		for(int j=0; j<trains.numInstances(); j++){
 			Instance in = trains.instance(j);
+			
+			//This is the actual data string
 			System.out.println(in.toString());
 			
 			//Instance in = trains.instance(82000);
 			//PRINTS OUT 0.0 FOR ABLE
 			//1.0 FOR NOT
 			//System.out.println(in.attribute(10));
-			double res = (cls.classifyInstance(in));
+			
+			//This is what it's classified as
+			/*double res = (cls.classifyInstance(in));
 			if(res == 0.0){
 				System.out.println("ABLE");
 			}
 			else{
 				System.out.println("NOT");
-			}
-			
+			}*/
+			//What it should return to abdullah's thing is 1.0 or 0.0
+			//Method to use for abdullah:
+			double res = (cls.classifyInstance(in));
+			System.out.println(res);
 		}
 
-		//eTest.evaluateModelOnce(cls, i);
-		//System.out.println(eTest.evaluateModelOnce(cls, i));
-		//System.out.println(eTest.predictions().);
-		//System.out.println(eTest.toSummaryString());
 	}
+	
 }
